@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import load_model
+from tensorflow.keras.initializers import Orthogonal
 
 # Load the model
-model = tf.keras.models.load_model('toxicity.h5')
+custom_objects = {'Orthogonal': Orthogonal}
+model = load_model('toxicity.h5', custom_objects=custom_objects)
 
 # Load the dataset to access column names
 df = pd.read_csv('train.csv')
