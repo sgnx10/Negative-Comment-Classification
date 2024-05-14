@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # Load the model
 model = tf.keras.models.load_model('toxicity.h5')
@@ -9,25 +10,24 @@ model = tf.keras.models.load_model('toxicity.h5')
 # Load the dataset to access column names
 df = pd.read_csv('train.csv')
 
-# Initialize TextVectorization
-MAX_FEATURES = 200000
-MAX_LENGTH = 1800
-vectorizer = TextVectorization(max_tokens=MAX_FEATURES,
-                               output_sequence_length=MAX_LENGTH,
-                               output_mode='int')
-vectorizer.adapt(df['comment_text'].values)
-
+# Tokenize comments
+tokenizer = Tokenizer(num_words=MAX_FEATURES)
+tokenizer.fit_on_texts(df['comment_text'])
+MAX_LENGTH = 1800  # Same as before
 
 def score_comment(comment):
-    vectorized_comment = vectorizer([comment])
-    results = model.predict(vectorized_comment)
+    # Tokenize the comment
+    sequences = tokenizer.texts_to_sequences([comment])
+    # Pad sequences to fixed length
+    padded_sequences = pad_sequences(sequences, maxlen=MAX_LENGTH)
+    # Predict using the model
+    results = model.predict(padded_sequences)
 
     text = ''
     for idx, col in enumerate(df.columns[2:]):
         text += '{}: {}\n'.format(col, results[0][idx] > 0.5)
 
     return text
-
 
 # Create Streamlit interface
 st.title('Toxic Comment Classifier')
