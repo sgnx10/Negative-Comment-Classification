@@ -4,10 +4,10 @@ import tensorflow as tf
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
 # Load the model
-model = tf.keras.models.load_model(r'C:\Users\Sagnik\OneDrive\Desktop\PROJECT MAJOR\toxicity.h5')
+model = tf.keras.models.load_model('toxicity.h5')
 
 # Load the dataset to access column names
-df = pd.read_csv(r'C:\Users\Sagnik\OneDrive\Desktop\PROJECT MAJOR\train.csv')
+df = pd.read_csv('train.csv')
 
 # Initialize TextVectorization
 MAX_FEATURES = 200000
