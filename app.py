@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
 # Load the model
 model = tf.keras.models.load_model('toxicity.h5')
@@ -12,9 +11,8 @@ df = pd.read_csv('train.csv')
 # Initialize TextVectorization
 MAX_FEATURES = 200000
 MAX_LENGTH = 1800
-vectorizer = TextVectorization(max_tokens=MAX_FEATURES,
-                               output_sequence_length=MAX_LENGTH,
-                               output_mode='int')
+vectorizer = tf.keras.layers.TextVectorization(max_tokens=MAX_FEATURES,
+                                               output_sequence_length=MAX_LENGTH)
 vectorizer.adapt(df['comment_text'].values)
 
 
